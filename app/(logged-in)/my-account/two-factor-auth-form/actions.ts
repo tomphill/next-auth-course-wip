@@ -5,6 +5,7 @@ import db from "@/db/drizzle";
 import { users } from "@/db/usersSchema";
 import { eq } from "drizzle-orm";
 import { authenticator } from "otplib";
+import speakeasy from "speakeasy";
 
 export const get2faSecret = async () => {
   const session = await auth();
@@ -31,6 +32,15 @@ export const get2faSecret = async () => {
   }
 
   let twoFactorSecret = user.twoFactorSecret;
+
+  const token1Test = authenticator.generateSecret();
+  // if authenticator.generateSecret doesn't work, try this line instead:
+  // note you'll need to `npm i speakeasy && npm i -D @types/speakeasy`
+  const generatedSecret = speakeasy.generateSecret({ length: 10 });
+  const token2Test = generatedSecret.base32;
+
+  console.log({ token1Test });
+  console.log({ token2Test });
 
   if (!twoFactorSecret) {
     twoFactorSecret = authenticator.generateSecret();
